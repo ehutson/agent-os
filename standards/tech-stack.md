@@ -1,7 +1,7 @@
 # Tech Stack
 
 > Version: 1.0.0
-> Last Updated: 2025-08-31
+> Last Updated: 2025-07-23
 
 ## Context
 
@@ -10,76 +10,79 @@ This file is part of the Agent OS standards system. These global tech stack defa
 ## Core Technologies
 
 ### Application Framework
-- **Framework:** Ruby on Rails
-- **Version:** 8.0+
-- **Language:** Ruby 3.2+
+
+- **Framework:** Spring Boot
+- **Version:** 3.5+
+- **Language:** Java 24
+- **Build System:** Gradle-Kotlin
 
 ### Database
+
 - **Primary:** PostgreSQL
-- **Version:** 17+
-- **ORM:** Active Record
+- **Version:** 16+
+- **ORM:** Spring Data JPA
+- **Migrations:** Flyway
+- **APIs:** GraphQL (DGS with DGS Codegen)
 
 ## Frontend Stack
 
-### JavaScript Framework
+### Typescript Framework
+
 - **Framework:** React
 - **Version:** Latest stable
 - **Build Tool:** Vite
 
 ### Import Strategy
+
 - **Strategy:** Node.js modules
 - **Package Manager:** npm
 - **Node Version:** 22 LTS
 
 ### CSS Framework
+
 - **Framework:** TailwindCSS
 - **Version:** 4.0+
 - **PostCSS:** Yes
 
 ### UI Components
-- **Library:** Instrumental Components
+
+- **Library:** shadcn/ui
 - **Version:** Latest
-- **Installation:** Via development gems group
+- **Installation:** npx shadcn@latest init
+
+### API
+
+- **Library:** apollo graphql client
+- **Version:** latest
 
 ## Assets & Media
 
-### Fonts
-- **Provider:** Google Fonts
-- **Loading Strategy:** Self-hosted for performance
-
 ### Icons
+
 - **Library:** Lucide
 - **Implementation:** React components
 
 ## Infrastructure
 
 ### Application Hosting
-- **Platform:** Digital Ocean
-- **Service:** App Platform / Droplets
-- **Region:** Primary region based on user base
+
+- **Platform:** Internal
+- **Service:** Docker
 
 ### Database Hosting
-- **Provider:** Digital Ocean
-- **Service:** Managed PostgreSQL
-- **Backups:** Daily automated
 
-### Asset Storage
-- **Provider:** Amazon S3
-- **CDN:** CloudFront
-- **Access:** Private with signed URLs
+- **Provider:** Internal
+- **Service:** PostgreSQL running in a docker container
 
 ## Deployment
 
 ### CI/CD Pipeline
+
 - **Platform:** GitHub Actions
 - **Trigger:** Push to main/staging branches
 - **Tests:** Run before deployment
 
 ### Environments
+
 - **Production:** main branch
-- **Staging:** staging branch
 - **Review Apps:** PR-based (optional)
-
----
-
-*Customize this file with your organization's preferred tech stack. These defaults are used when initializing new projects with Agent OS.*
