@@ -1,7 +1,7 @@
 # Code Style Guide
 
 > Version: 1.0.0
-> Last Updated: 2025-04-24
+> Last Updated: 2025-07-23
 
 ## Context
 
@@ -10,28 +10,26 @@ This file is part of the Agent OS standards system. These global code style rule
 ## General Formatting
 
 ### Indentation
-- Use 2 spaces for indentation (never tabs)
+
+- Use 4 spaces for indentation (never tabs)
 - Maintain consistent indentation throughout files
 - Align nested structures for readability
 
 ### Naming Conventions
-- **Methods and Variables**: Use snake_case (e.g., `user_profile`, `calculate_total`)
-- **Classes and Modules**: Use PascalCase (e.g., `UserProfile`, `PaymentProcessor`)
-- **Constants**: Use UPPER_SNAKE_CASE (e.g., `MAX_RETRY_COUNT`)
 
-### String Formatting
-- Use single quotes for strings: `'Hello World'`
-- Use double quotes only when interpolation is needed
-- Use template literals for multi-line strings or complex interpolation
+- **Java:** Follow standard Java coding conventions
+- **Typescript:** Follow standard typescript coding conventions
 
 ## HTML/Template Formatting
 
 ### Structure Rules
-- Use 2 spaces for indentation
+
+- Use 4 spaces for indentation
 - Place nested elements on new lines with proper indentation
 - Content between tags should be on its own line when multi-line
 
 ### Attribute Formatting
+
 - Place each HTML attribute on its own line
 - Align attributes vertically
 - Keep the closing `>` on the same line as the last attribute
@@ -40,21 +38,17 @@ This file is part of the Agent OS standards system. These global code style rule
 
 ```html
 <div class="container">
-  <header class="flex flex-col space-y-2
-                 md:flex-row md:space-y-0 md:space-x-4">
-    <h1 class="text-primary dark:text-primary-300">
-      Page Title
-    </h1>
-    <nav class="flex flex-col space-y-2
-                md:flex-row md:space-y-0 md:space-x-4">
-      <a href="/"
-         class="btn-ghost">
-        Home
-      </a>
-      <a href="/about"
-         class="btn-ghost">
-        About
-      </a>
+  <header
+    class="flex flex-col space-y-2
+                 md:flex-row md:space-y-0 md:space-x-4"
+  >
+    <h1 class="text-primary dark:text-primary-300">Page Title</h1>
+    <nav
+      class="flex flex-col space-y-2
+                md:flex-row md:space-y-0 md:space-x-4"
+    >
+      <a href="/" class="btn-ghost"> Home </a>
+      <a href="/about" class="btn-ghost"> About </a>
     </nav>
   </header>
 </div>
@@ -87,24 +81,44 @@ This file is part of the Agent OS standards system. These global code style rule
 ## Code Comments
 
 ### When to Comment
+
 - Add brief comments above non-obvious business logic
 - Document complex algorithms or calculations
 - Explain the "why" behind implementation choices
+- Prefer the javadoc format when adding comments to java classes and methods.
+- Prefer single or multi-line comments when working with typescript.
 
 ### Comment Maintenance
+
 - Never remove existing comments unless removing the associated code
 - Update comments when modifying code to maintain accuracy
 - Keep comments concise and relevant
 
 ### Comment Format
-```ruby
-# Calculate compound interest with monthly contributions
-# Uses the formula: A = P(1 + r/n)^(nt) + PMT × (((1 + r/n)^(nt) - 1) / (r/n))
-def calculate_compound_interest(principal, rate, time, monthly_payment)
-  # Implementation here
-end
+
+```java
+// This is a single-line comment
+int x = 10; // This comments on the variable x
+
+/*
+ * This is a multi-line comment
+ * that can explain more complex logic.
+ */
+
+/**
+ * This class represents a simple javadoc example.
+ * @author YourName
+ */
+public class Example {
+    /**
+     * Adds two integers and returns the sum.
+     * @param a The first integer.
+     * @param b The second integer.
+     * @return The sum of a and b.
+     */
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
 ```
-
----
-
-*Customize this file with your team's specific style preferences. These formatting rules apply to all code written by humans and AI agents.*
