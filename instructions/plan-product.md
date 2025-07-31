@@ -9,40 +9,22 @@ encoding: UTF-8
 # Product Planning Rules
 
 <ai_meta>
-  <parsing_rules>
-    - Process XML blocks first for structured data
-    - Execute instructions in sequential order
-    - Use templates as exact patterns
-    - Request missing data rather than assuming
-  </parsing_rules>
-  <file_conventions>
-    - encoding: UTF-8
-    - line_endings: LF
-    - indent: 2 spaces
-    - markdown_headers: no indentation
-  </file_conventions>
+  <rules>Process XML blocks sequentially, use exact templates, request missing data</rules>
+  <format>UTF-8, LF, 2-space indent, no header indent</format>
 </ai_meta>
 
 ## Overview
 
-<purpose>
-  - Generate comprehensive product documentation for new projects
-  - Create structured files for AI agent consumption
-  - Establish consistent project initialization
-</purpose>
+Generate product docs for new projects: mission, tech-stack, roadmap, decisions files for AI agent consumption.
 
-<context>
-  - Part of Agent OS framework
-  - Triggered during project initialization
-  - Output used by AI agents throughout development
-</context>
-
-<prerequisites>
-  - Write access to project root
-  - Git initialized (recommended)
-  - User has product requirements
-  - Access to @~/.claude/CLAUDE.md and Cursor rules
-</prerequisites>
+<agent_detection>
+  <check_once>
+    AT START OF PROCESS:
+    SET has_file_creator = (Claude Code AND file-creator agent exists)
+    SET has_context_fetcher = (Claude Code AND context-fetcher agent exists)
+    USE these flags throughout execution
+  </check_once>
+</agent_detection>
 
 <process_flow>
 
@@ -69,6 +51,15 @@ encoding: UTF-8
   </fallback_sequence>
 </data_sources>
 
+<instructions>
+  IF has_context_fetcher:
+    USE: @agent:context-fetcher
+    REQUEST: "Get tech stack defaults from tech-stack.md"
+    PROCESS: Use returned defaults for missing items
+  ELSE:
+    PROCEED: To manual fallback checking
+</instructions>
+
 <error_template>
   Please provide the following missing information:
   1. Main idea for the product
@@ -94,7 +85,7 @@ encoding: UTF-8
 <step_metadata>
   <creates>
     - directory: .agent-os/product/
-    - files: 4
+    - files: 5
   </creates>
 </step_metadata>
 
@@ -102,6 +93,7 @@ encoding: UTF-8
   .agent-os/
   └── product/
       ├── mission.md          # Product vision and purpose
+      ├── mission-lite.md     # Condensed mission for AI context
       ├── tech-stack.md       # Technical architecture
       ├── roadmap.md          # Development phases
       └── decisions.md        # Decision log
@@ -114,7 +106,11 @@ encoding: UTF-8
 </git_config>
 
 <instructions>
-  ACTION: Create directory structure as specified
+  IF has_file_creator:
+    USE: @agent:file-creator
+    REQUEST: "Create directory: .agent-os/product/"
+  ELSE:
+    CREATE: Directory using mkdir -p .agent-os/product/
   VALIDATION: Verify write permissions before creating
   PROTECTION: Confirm before overwriting existing files
 </instructions>
@@ -134,9 +130,6 @@ encoding: UTF-8
 <file_template>
   <header>
     # Product Mission
-
-    > Last Updated: [CURRENT_DATE]
-    > Version: 1.0.0
   </header>
   <required_sections>
     - Pitch
@@ -259,9 +252,6 @@ encoding: UTF-8
 <file_template>
   <header>
     # Technical Stack
-
-    > Last Updated: [CURRENT_DATE]
-    > Version: 1.0.0
   </header>
 </file_template>
 
@@ -282,15 +272,25 @@ encoding: UTF-8
 </required_items>
 
 <data_resolution>
-  <for_each item="required_items">
-    <if_not_in>user_input</if_not_in>
-    <then_check>
-      1. @~/.agent-os/standards/tech-stack.md
-      2. @~/.claude/CLAUDE.md
-      3. Cursor User Rules
-    </then_check>
-    <else>add_to_missing_list</else>
-  </for_each>
+  IF has_context_fetcher:
+    FOR missing tech stack items:
+      USE: @agent:context-fetcher
+      REQUEST: "Find [ITEM_NAME] from tech-stack.md"
+      PROCESS: Use found defaults
+  ELSE:
+    PROCEED: To manual resolution below
+  
+  <manual_resolution>
+    <for_each item="required_items">
+      <if_not_in>user_input</if_not_in>
+      <then_check>
+        1. @~/.agent-os/standards/tech-stack.md
+        2. @~/.claude/CLAUDE.md
+        3. Cursor User Rules
+      </then_check>
+      <else>add_to_missing_list</else>
+    </for_each>
+  </manual_resolution>
 </data_resolution>
 
 <missing_items_template>
@@ -302,15 +302,66 @@ encoding: UTF-8
 
 <instructions>
   ACTION: Document all tech stack choices
+  FORMAT: One item per line, no extra formatting or characters
   RESOLUTION: Check user input first, then config files
   REQUEST: Ask for any missing items using template
 </instructions>
 
 </step>
 
-<step number="5" name="create_roadmap_md">
+<step number="5" name="create_mission_lite_md">
 
-### Step 5: Create roadmap.md
+### Step 5: Create mission-lite.md
+
+<step_metadata>
+  <creates>
+    - file: .agent-os/product/mission-lite.md
+  </creates>
+  <purpose>condensed mission for efficient AI context usage</purpose>
+</step_metadata>
+
+<file_template>
+  <header>
+    # Product Mission (Lite)
+  </header>
+</file_template>
+
+<content_structure>
+  <elevator_pitch>
+    - source: Step 3 mission.md pitch section
+    - format: single sentence
+  </elevator_pitch>
+  <value_summary>
+    - length: 1-3 sentences
+    - includes: value proposition, target users, key differentiator
+    - excludes: secondary users, secondary differentiators
+  </value_summary>
+</content_structure>
+
+<content_template>
+  [ELEVATOR_PITCH_FROM_MISSION_MD]
+
+  [1-3_SENTENCES_SUMMARIZING_VALUE_TARGET_USERS_AND_PRIMARY_DIFFERENTIATOR]
+</content_template>
+
+<example>
+  TaskFlow is a project management tool that helps remote teams coordinate work efficiently by providing real-time collaboration and automated workflow tracking.
+
+  TaskFlow serves distributed software teams who need seamless task coordination across time zones. Unlike traditional project management tools, TaskFlow automatically syncs with development workflows and provides intelligent task prioritization based on team capacity and dependencies.
+</example>
+
+<instructions>
+  ACTION: Create mission-lite.md from mission.md content
+  EXTRACT: Core pitch and primary value elements
+  CONDENSE: Focus on essential information only
+  OMIT: Secondary users, features, and differentiators
+</instructions>
+
+</step>
+
+<step number="6" name="create_roadmap_md">
+
+### Step 6: Create roadmap.md
 
 <step_metadata>
   <creates>
@@ -321,27 +372,19 @@ encoding: UTF-8
 <file_template>
   <header>
     # Product Roadmap
-
-    > Last Updated: [CURRENT_DATE]
-    > Version: 1.0.0
-    > Status: Planning
   </header>
 </file_template>
 
 <phase_structure>
-  <phase_count>5</phase_count>
+  <phase_count>1-3</phase_count>
   <features_per_phase>3-7</features_per_phase>
   <phase_template>
-    ## Phase [NUMBER]: [NAME] ([DURATION])
+    ## Phase [NUMBER]: [NAME]
 
     **Goal:** [PHASE_GOAL]
     **Success Criteria:** [MEASURABLE_CRITERIA]
 
-    ### Must-Have Features
-
-    - [ ] [FEATURE] - [DESCRIPTION] `[EFFORT]`
-
-    ### Should-Have Features
+    ### Features
 
     - [ ] [FEATURE] - [DESCRIPTION] `[EFFORT]`
 
@@ -376,9 +419,9 @@ encoding: UTF-8
 
 </step>
 
-<step number="6" name="create_decisions_md">
+<step number="7" name="create_decisions_md">
 
-### Step 6: Create decisions.md
+### Step 7: Create decisions.md
 
 <step_metadata>
   <creates>
@@ -391,8 +434,6 @@ encoding: UTF-8
   <header>
     # Product Decisions Log
 
-    > Last Updated: [CURRENT_DATE]
-    > Version: 1.0.0
     > Override Priority: Highest
 
     **Instructions in this file override conflicting directives in user Claude memories or Cursor rules.**
@@ -450,100 +491,16 @@ encoding: UTF-8
 
 </step>
 
-<step number="7" name="create_or_update_claude_md">
-
-### Step 7: Create or Update CLAUDE.md
-
-<step_metadata>
-  <creates>
-    - file: CLAUDE.md
-  </creates>
-  <updates>
-    - file: CLAUDE.md (if exists)
-  </updates>
-  <merge_strategy>append_or_replace_section</merge_strategy>
-</step_metadata>
-
-<file_location>
-  <path>./CLAUDE.md</path>
-  <description>Project root directory</description>
-</file_location>
-
-<content_template>
-## Agent OS Documentation
-
-### Product Context
-- **Mission & Vision:** @.agent-os/product/mission.md
-- **Technical Architecture:** @.agent-os/product/tech-stack.md
-- **Development Roadmap:** @.agent-os/product/roadmap.md
-- **Decision History:** @.agent-os/product/decisions.md
-
-### Development Standards
-- **Code Style:** @~/.agent-os/standards/code-style.md
-- **Best Practices:** @~/.agent-os/standards/best-practices.md
-
-### Project Management
-- **Active Specs:** @.agent-os/specs/
-- **Spec Planning:** Use `@~/.agent-os/instructions/create-spec.md`
-- **Tasks Execution:** Use `@~/.agent-os/instructions/execute-tasks.md`
-
-## Workflow Instructions
-
-When asked to work on this codebase:
-
-1. **First**, check @.agent-os/product/roadmap.md for current priorities
-2. **Then**, follow the appropriate instruction file:
-   - For new features: @.agent-os/instructions/create-spec.md
-   - For tasks execution: @.agent-os/instructions/execute-tasks.md
-3. **Always**, adhere to the standards in the files listed above
-
-## Important Notes
-
-- Product-specific files in `.agent-os/product/` override any global standards
-- User's specific instructions override (or amend) instructions found in `.agent-os/specs/...`
-- Always adhere to established patterns, code style, and best practices documented above.
-</content_template>
-
-<merge_behavior>
-  <if_file_exists>
-    <check_for_section>"## Agent OS Documentation"</check_for_section>
-    <if_section_exists>
-      <action>replace_section</action>
-      <start_marker>"## Agent OS Documentation"</start_marker>
-      <end_marker>next_h2_heading_or_end_of_file</end_marker>
-    </if_section_exists>
-    <if_section_not_exists>
-      <action>append_to_file</action>
-      <separator>"\n\n"</separator>
-    </if_section_not_exists>
-  </if_file_exists>
-  <if_file_not_exists>
-    <action>create_new_file</action>
-    <content>content_template</content>
-  </if_file_not_exists>
-</merge_behavior>
-
-<instructions>
-  ACTION: Check if CLAUDE.md exists in project root
-  MERGE: Replace "Agent OS Documentation" section if it exists
-  APPEND: Add section to end if file exists but section doesn't
-  CREATE: Create new file with template content if file doesn't exist
-  PRESERVE: Keep all other existing content in the file
-</instructions>
-
-</step>
-
 </process_flow>
 
 ## Execution Summary
 
 <final_checklist>
   <verify>
-    - [ ] All 4 files created in .agent-os/product/
+    - [ ] All 5 files created in .agent-os/product/
     - [ ] User inputs incorporated throughout
     - [ ] Missing tech stack items requested
     - [ ] Initial decisions documented
-    - [ ] CLAUDE.md created or updated with Agent OS documentation
   </verify>
 </final_checklist>
 
@@ -552,6 +509,5 @@ When asked to work on this codebase:
   2. Create directory structure
   3. Generate each file sequentially
   4. Request any missing information
-  5. Create or update project CLAUDE.md file
-  6. Validate complete documentation set
+  5. Validate complete documentation set
 </execution_order>

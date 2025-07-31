@@ -48,6 +48,7 @@ BASE_URL="https://raw.githubusercontent.com/ehutson/agent-os/main"
 # Create directories
 echo "📁 Creating directories..."
 mkdir -p "$HOME/.agent-os/standards"
+mkdir -p "$HOME/.agent-os/standards/code-style"
 mkdir -p "$HOME/.agent-os/instructions"
 
 # Download standards files
@@ -87,6 +88,46 @@ else
         echo "  ✓ ~/.agent-os/standards/best-practices.md (overwritten)"
     else
         echo "  ✓ ~/.agent-os/standards/best-practices.md"
+    fi
+fi
+
+# Download code-style subdirectory files
+echo ""
+echo "📥 Downloading code style files to ~/.agent-os/standards/code-style/"
+
+# css-style.md
+if [ -f "$HOME/.agent-os/standards/code-style/css-style.md" ] && [ "$OVERWRITE_STANDARDS" = false ]; then
+    echo "  ⚠️  ~/.agent-os/standards/code-style/css-style.md already exists - skipping"
+else
+    curl -s -o "$HOME/.agent-os/standards/code-style/css-style.md" "${BASE_URL}/standards/code-style/css-style.md"
+    if [ -f "$HOME/.agent-os/standards/code-style/css-style.md" ] && [ "$OVERWRITE_STANDARDS" = true ]; then
+        echo "  ✓ ~/.agent-os/standards/code-style/css-style.md (overwritten)"
+    else
+        echo "  ✓ ~/.agent-os/standards/code-style/css-style.md"
+    fi
+fi
+
+# html-style.md
+if [ -f "$HOME/.agent-os/standards/code-style/html-style.md" ] && [ "$OVERWRITE_STANDARDS" = false ]; then
+    echo "  ⚠️  ~/.agent-os/standards/code-style/html-style.md already exists - skipping"
+else
+    curl -s -o "$HOME/.agent-os/standards/code-style/html-style.md" "${BASE_URL}/standards/code-style/html-style.md"
+    if [ -f "$HOME/.agent-os/standards/code-style/html-style.md" ] && [ "$OVERWRITE_STANDARDS" = true ]; then
+        echo "  ✓ ~/.agent-os/standards/code-style/html-style.md (overwritten)"
+    else
+        echo "  ✓ ~/.agent-os/standards/code-style/html-style.md"
+    fi
+fi
+
+# javascript-style.md
+if [ -f "$HOME/.agent-os/standards/code-style/javascript-style.md" ] && [ "$OVERWRITE_STANDARDS" = false ]; then
+    echo "  ⚠️  ~/.agent-os/standards/code-style/javascript-style.md already exists - skipping"
+else
+    curl -s -o "$HOME/.agent-os/standards/code-style/javascript-style.md" "${BASE_URL}/standards/code-style/javascript-style.md"
+    if [ -f "$HOME/.agent-os/standards/code-style/javascript-style.md" ] && [ "$OVERWRITE_STANDARDS" = true ]; then
+        echo "  ✓ ~/.agent-os/standards/code-style/javascript-style.md (overwritten)"
+    else
+        echo "  ✓ ~/.agent-os/standards/code-style/javascript-style.md"
     fi
 fi
 
@@ -130,6 +171,18 @@ else
     fi
 fi
 
+# execute-task.md
+if [ -f "$HOME/.agent-os/instructions/execute-task.md" ] && [ "$OVERWRITE_INSTRUCTIONS" = false ]; then
+    echo "  ⚠️  ~/.agent-os/instructions/execute-task.md already exists - skipping"
+else
+    curl -s -o "$HOME/.agent-os/instructions/execute-task.md" "${BASE_URL}/instructions/execute-task.md"
+    if [ -f "$HOME/.agent-os/instructions/execute-task.md" ] && [ "$OVERWRITE_INSTRUCTIONS" = true ]; then
+        echo "  ✓ ~/.agent-os/instructions/execute-task.md (overwritten)"
+    else
+        echo "  ✓ ~/.agent-os/instructions/execute-task.md"
+    fi
+fi
+
 # analyze-product.md
 if [ -f "$HOME/.agent-os/instructions/analyze-product.md" ] && [ "$OVERWRITE_INSTRUCTIONS" = false ]; then
     echo "  ⚠️  ~/.agent-os/instructions/analyze-product.md already exists - skipping"
@@ -169,10 +222,10 @@ echo ""
 echo "2. Install commands for your AI coding assistant(s):"
 echo ""
 echo "   - Using Claude Code? Install the Claude Code commands with:"
-echo "     curl -sSL https://raw.githubusercontent.com/ehutsons/agent-os/main/setup-claude-code.sh | bash"
+echo "     curl -sSL https://raw.githubusercontent.com/ehutson/agent-os/main/setup-claude-code.sh | bash"
 echo ""
 echo "   - Using Cursor? Install the Cursor commands with:"
-echo "     curl -sSL https://raw.githubusercontent.com/ehutsons/agent-os/main/setup-cursor.sh | bash"
+echo "     curl -sSL https://raw.githubusercontent.com/ehutson/agent-os/main/setup-cursor.sh | bash"
 echo ""
 echo "   - Using something else? See instructions at https://buildermethods.com/agent-os"
 echo ""

@@ -5,7 +5,14 @@
 
 ## Context
 
-This file is part of the Agent OS standards system. These global code style rules are referenced by all product codebases and provide default formatting guidelines. Individual projects may extend or override these rules in their `.agent-os/product/code-style.md` file.
+Global code style rules for Agent OS projects.
+
+<conditional-block context-check="general-formatting">
+IF this General Formatting section already read in current context:
+  SKIP: Re-reading this section
+  NOTE: "Using General Formatting rules already in context"
+ELSE:
+  READ: The following formatting rules
 
 ## General Formatting
 
@@ -19,6 +26,7 @@ This file is part of the Agent OS standards system. These global code style rule
 
 - **Java:** Follow standard Java coding conventions
 - **Typescript:** Follow standard typescript coding conventions
+- **Constants**: use UPPER_SNAKE_CASE (e.g., `MAX_RETRY_COUNT`)
 
 ## HTML/Template Formatting
 
@@ -80,11 +88,14 @@ This file is part of the Agent OS standards system. These global code style rule
 
 ## Code Comments
 
-### When to Comment
+### Code Comments
 
 - Add brief comments above non-obvious business logic
 - Document complex algorithms or calculations
 - Explain the "why" behind implementation choices
+- Never remove existing comments unless removing the associated code
+- Update comments when modifying code to maintain accuracy
+- Keep comments concise and relevant
 - Prefer the javadoc format when adding comments to java classes and methods.
 - Prefer single or multi-line comments when working with typescript.
 
@@ -93,32 +104,79 @@ This file is part of the Agent OS standards system. These global code style rule
 - Never remove existing comments unless removing the associated code
 - Update comments when modifying code to maintain accuracy
 - Keep comments concise and relevant
+</conditional-block>
 
-### Comment Format
+<conditional-block task-condition="html-css-tailwind" context-check="html-css-style">
+IF current task involves writing or updating HTML, CSS, or TailwindCSS:
+  IF html-style.md AND css-style.md already in context:
+    SKIP: Re-reading these files
+    NOTE: "Using HTML/CSS style guides already in context"
+  ELSE:
+    <context_fetcher_strategy>
+      IF current agent is Claude Code AND context-fetcher agent exists:
+        USE: @agent:context-fetcher
+        REQUEST: "Get HTML formatting rules from code-style/html-style.md"
+        REQUEST: "Get CSS and TailwindCSS rules from code-style/css-style.md"
+        PROCESS: Returned style rules
+      ELSE:
+        READ the following style guides (only if not already in context):
+        - @~/.agent-os/standards/code-style/html-style.md (if not in context)
+        - @~/.agent-os/standards/code-style/css-style.md (if not in context)
+    </context_fetcher_strategy>
+ELSE:
+  SKIP: HTML/CSS style guides not relevant to current task
+</conditional-block>
 
-```java
-// This is a single-line comment
-int x = 10; // This comments on the variable x
+<conditional-block task-condition="javascript" context-check="javascript-style">
+IF current task involves writing or updating JavaScript:
+  IF javascript-style.md already in context:
+    SKIP: Re-reading this file
+    NOTE: "Using JavaScript style guide already in context"
+  ELSE:
+    <context_fetcher_strategy>
+      IF current agent is Claude Code AND context-fetcher agent exists:
+        USE: @agent:context-fetcher
+        REQUEST: "Get JavaScript style rules from code-style/javascript-style.md"
+        PROCESS: Returned style rules
+      ELSE:
+        READ: @~/.agent-os/standards/code-style/javascript-style.md
+    </context_fetcher_strategy>
+ELSE:
+  SKIP: JavaScript style guide not relevant to current task
+</conditional-block>
 
-/*
- * This is a multi-line comment
- * that can explain more complex logic.
- */
+<conditional-block task-condition="typescript" context-check="typescript-style">
+IF current task involves writing or updating Typescript:
+  IF typescript-style.md already in context:
+    SKIP: Re-reading this file
+    NOTE: "Using TypeScript style guide already in context"
+  ELSE:
+    <context_fetcher_strategy>
+      IF current agent is Claude Code AND context-fetcher agent exists:
+        USE: @agent:context-fetcher
+        REQUEST: "Get TypeScript style rules from code-style/typescript-style.md"
+        PROCESS: Returned style rules
+      ELSE:
+        READ: @~/.agent-os/standards/code-style/typescript-style.md
+    </context_fetcher_strategy>
+ELSE:
+  SKIP: TypeScript style guide not relevant to current task
+</conditional-block>
 
-/**
- * This class represents a simple javadoc example.
- * @author YourName
- */
-public class Example {
-    /**
-     * Adds two integers and returns the sum.
-     * @param a The first integer.
-     * @param b The second integer.
-     * @return The sum of a and b.
-     */
-    public int add(int a, int b) {
-        return a + b;
-    }
-}
-
-```
+<conditional-block task-condition="java" context-check="java-style">
+IF current task involves writing or updating Java:
+  IF java-style.md already in context:
+    SKIP: Re-reading this file
+    NOTE: "Using Java style guide already in context"
+  ELSE:
+    <context_fetcher_strategy>
+      IF current agent is Claude Code AND context-fetcher agent exists:
+        USE: @agent:context-fetcher
+        REQUEST: "Get Java style rules from code-style/java-style.md"
+        PROCESS: Returned style rules
+      ELSE:
+        READ: @~/.agent-os/standards/code-style/java-style.md
+    </context_fetcher_strategy>
+ELSE:
+  SKIP: JavaScript style guide not relevant to current task
+</conditional-block>
