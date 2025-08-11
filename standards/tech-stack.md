@@ -27,3 +27,5 @@ Global tech stack defaults for Agent OS projects, overridable in project-specifi
 - CI/CD Trigger: Push to main/staging branches
 - Tests: Run before deployment
 - Production Environment: main branch
+- Authentication: keycloak with JWT validation in back-end using spring-security and react-oidc-context for the react front-end
+  
